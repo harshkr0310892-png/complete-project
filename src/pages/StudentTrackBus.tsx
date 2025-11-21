@@ -302,6 +302,16 @@ const StudentTrackBus: React.FC = () => {
   useEffect(() => {
     const unsub = subscribeToSupabaseChanges<BusLoc[]>(BUS_LOCATIONS_KEY, (val) => {
       if (!myAssignment) return;
+      // If this student's assignment has been marked as reached home or absent,
+      // we should not show the map/compass even if bus location updates arrive.
+      const assignmentStatus = (myAssignment as any).trackingStatus;
+      if (assignmentStatus === 'reached_home' || assignmentStatus === 'absent') {
+        setBusLoc(null);
+        setIsTrackingActive(false);
+        // Keep a friendly status message (already set elsewhere) but clear any 'waiting' text
+        return;
+      }
+
       const current = (Array.isArray(val) ? val : []).find(l => l.busUserId === myAssignment.busUserId) || null;
       setBusLoc(current);
       if (!current) setStatus('Waiting for the bus to start tracking...'); else setStatus('');
@@ -498,17 +508,25 @@ const StudentTrackBus: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(async () => {
       if (!myAssignment?.busId) return;
-      
+
+      // If student has been marked reached_home or absent, stop showing map/compass
+      const assignmentStatus = (myAssignment as any)?.trackingStatus;
+      if (assignmentStatus === 'reached_home' || assignmentStatus === 'absent') {
+        if (busLoc) setBusLoc(null);
+        setIsTrackingActive(false);
+        return;
+      }
+
       try {
         const list = await getSupabaseData<any[]>(BUS_LOCATIONS_KEY, []);
         const loc = (list || []).find((l: any) => l.busId === myAssignment.busId);
-        
+
         if (loc) {
           // Update previous location before updating current
           if (busLoc) {
             setPreviousBusLoc({ ...busLoc });
           }
-          
+
           setBusLoc({ lat: loc.lat, lng: loc.lng });
           setIsTrackingActive(true);
         } else {
@@ -521,7 +539,7 @@ const StudentTrackBus: React.FC = () => {
     }, 50);
 
     return () => clearInterval(interval);
-  }, [myAssignment?.busId, busLoc]);
+  }, [myAssignment?.busId, myAssignment, busLoc]);
 
   const openDocumentViewer = (imageUrl: string, title: string) => {
     setCurrentImage(imageUrl);

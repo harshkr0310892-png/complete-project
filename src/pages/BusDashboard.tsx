@@ -502,7 +502,12 @@ const BusDashboard: React.FC = () => {
         } : a
       );
       await setSupabaseData(ASSIGNMENTS_GLOBAL_KEY, updatedGlobal);
-      toast.success(`Student ${status === 'reached_home' ? 'marked as reached home' : status === 'absent' ? 'marked as absent' : 'tracking activated'}`);
+      // Do not show a toast when a student is marked as reached home or absent
+      if (status === 'reached_home' || status === 'absent') {
+        // intentionally silent: client dashboards will react to assignment changes
+      } else {
+        toast.success('Student tracking activated');
+      }
     } catch (e) {
       console.error("Failed to update global assignments:", e);
       toast.error("Failed to update tracking status globally.");

@@ -1916,17 +1916,17 @@ Student ID: ${studentId}`);
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 + index * 0.05 }}
                     onClick={item.action}
-                    className="p-2 sm:p-2 lg:p-4 rounded-xl bg-gradient-to-br from-sky-500/10 via-royal/80 to-gold/20 border border-gold/40 hover:from-sky-500/20 hover:via-royal hover:to-gold/30 hover:border-gold/70 transition-all duration-300 cursor-pointer min-h-[80px] sm:min-h-[90px] lg:min-h-auto flex shadow-md hover:shadow-xl"
+                    className="p-3 sm:p-4 lg:p-4 rounded-lg bg-card/80 border border-border/30 hover:bg-card/95 transition-shadow duration-200 cursor-pointer flex flex-col items-center justify-center gap-3 shadow-sm hover:shadow-md"
                   >
-                    <div className="flex flex-col items-center justify-center text-center space-y-1 sm:space-y-1 lg:space-y-3 w-full">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 lg:w-12 lg:h-12 rounded-full bg-gradient-to-br from-gold via-yellow-400 to-sky-400 flex items-center justify-center flex-shrink-0 shadow-md">
-                        <item.icon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-royal" />
+                    <div className="flex flex-col items-center justify-center text-center w-full">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-gradient-to-br from-royal/10 to-sky-200/5 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <item.icon className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-gold" />
                       </div>
                       <div className="flex-1 min-w-0 w-full">
-                        <h3 className="font-semibold text-gold text-[10px] sm:text-xs lg:text-sm leading-tight text-center px-1 break-words hyphens-auto">
+                        <h3 className="font-semibold text-foreground text-sm sm:text-base lg:text-sm leading-tight text-center px-1 break-words">
                           {item.title}
                         </h3>
-                        <p className="text-[8px] sm:text-[10px] lg:text-xs text-sky-100 leading-tight hidden sm:block text-center px-1 break-words mt-0.5">
+                        <p className="text-[11px] sm:text-sm text-muted-foreground leading-tight block text-center px-2 break-words mt-1">
                           {item.desc}
                         </p>
                       </div>

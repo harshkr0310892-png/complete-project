@@ -146,26 +146,13 @@ const Footer = () => {
   );
 
   return (
-    <footer className="relative bg-gradient-to-t from-[#0a0a0a] to-[#111] text-foreground overflow-hidden transition-all duration-500" style={{ borderTopLeftRadius: '40px', borderTopRightRadius: '40px' }}>
-      {/* Glow Effect in Center */}
-      <div className="absolute left-1/2 -translate-x-1/2 w-[200px] sm:w-[300px] h-[100px] sm:h-[150px] pointer-events-none" style={{ top: '-60px', background: 'radial-gradient(circle, #00f5ff 0%, transparent 70%)', filter: 'blur(50px)' }}></div>
-      
-      {/* Dotted Grid Overlay */}
-      <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#444 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-      
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-20 dark:opacity-10">
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-royal/30 to-gold/30 dark:from-royal/20 dark:to-gold/20"></div>
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-gold/20 dark:bg-gold/10 blur-xl"></div>
-        <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-royal/20 dark:bg-royal/10 blur-xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-crimson/10 dark:bg-crimson/5 blur-2xl"></div>
-      </div>
-
+    <footer className="relative text-white overflow-hidden transition-all duration-300" style={{ borderTopLeftRadius: '24px', borderTopRightRadius: '24px', background: 'linear-gradient(180deg,#042a6b 0%, #38bdf8 50%, #f59e0b 100%)' }}>
+      {/* Simplified classic background (red + purple mix) */}
       <div className="relative z-10">
         {/* Main Footer Content */}
         <div className="container-wide py-6 sm:py-12 px-4 sm:px-6">
           {/* Mobile Compact Footer */}
-          <div className="sm:hidden">
+          <div className="sm:hidden font-sans">
             {/* School Info - Always visible on mobile */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -182,29 +169,29 @@ const Footer = () => {
                   className="h-10 w-10 flex-shrink-0 animate-glow"
                 />
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-base font-heading font-bold text-gradient-gold truncate">
+                  <span className="text-base font-semibold text-white truncate">
                     {brandingData.schoolName}
                   </span>
-                  <span className="text-[10px] text-white dark:text-gold tracking-wide truncate">
+                  <span className="text-[11px] text-sky-100 tracking-wide truncate">
                     {brandingData.tagline}
                   </span>
                 </div>
               </Link>
               
-              <p className="text-xs text-white dark:text-gold leading-relaxed mb-3">
+              <p className="text-sm text-sky-100 leading-relaxed mb-3">
                 Nurturing minds, shaping futures. For over 148 years, {brandingData.schoolName} has been 
                 committed to providing world-class education.
               </p>
 
               {/* Contact Info - Compact for 375px */}
-              <div className="space-y-1.5">
-                <div className="flex items-center space-x-2 text-white dark:text-gold">
-                  <Phone className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span className="text-[11px] truncate">+1 (555) 123-4567</span>
+              <div className="space-y-1.5 text-sky-100">
+                <div className="flex items-center space-x-2">
+                  <Phone className="h-4 w-4 flex-shrink-0 text-sky-200" />
+                  <span className="text-sm truncate">+1 (555) 123-4567</span>
                 </div>
-                <div className="flex items-center space-x-2 text-white dark:text-gold">
-                  <Mail className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span className="text-[11px] truncate">info@royalacademy.edu</span>
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-4 w-4 flex-shrink-0 text-sky-200" />
+                  <span className="text-sm truncate">info@royalacademy.edu</span>
                 </div>
               </div>
             </motion.div>
@@ -217,7 +204,7 @@ const Footer = () => {
                     <li key={link.name}>
                       <Link
                         to={link.path}
-                        className="text-sm text-white dark:text-gold hover:text-gold transition-colors"
+                        className="text-sm text-gold hover:text-white transition-colors"
                       >
                         {link.name}
                       </Link>
@@ -299,7 +286,7 @@ const Footer = () => {
           </div>
 
           {/* Desktop/Tablet Full Footer */}
-          <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-6 xl:gap-8">
+          <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-6 xl:gap-8 font-sans">
             
             {/* School Info */}
             <motion.div
@@ -367,7 +354,7 @@ const Footer = () => {
               transition={{ duration: 0, delay: 0 }}
               className="lg:col-span-1"
             >
-              <h3 className="text-lg font-heading font-bold text-gradient-gold mb-6">Quick Links</h3>
+              <h3 className="text-lg font-semibold text-white mb-6">Quick Links</h3>
               <ul className="space-y-3">
                 {quickLinks.map((link, index) => (
                   <motion.li
@@ -379,7 +366,7 @@ const Footer = () => {
                   >
                     <Link
                       to={link.path}
-                      className="text-white dark:text-gold hover:text-gold transition-colors flex items-center space-x-2"
+                      className="text-gold hover:text-sky-100 transition-colors flex items-center space-x-2"
                     >
                       <span className="text-sm">{link.name}</span>
                     </Link>
@@ -395,7 +382,7 @@ const Footer = () => {
               transition={{ duration: 0, delay: 0 }}
               className="lg:col-span-1"
             >
-              <h3 className="text-lg font-heading font-bold text-gradient-gold mb-6">Programs</h3>
+              <h3 className="text-lg font-semibold text-white mb-6">Programs</h3>
               <ul className="space-y-3">
                 {programs.map((program, index) => (
                   <motion.li
@@ -407,7 +394,7 @@ const Footer = () => {
                   >
                     <Link
                       to={program.path}
-                      className="text-white dark:text-gold hover:text-gold transition-colors flex items-center space-x-2"
+                      className="text-sky-100 hover:text-white transition-colors flex items-center space-x-2"
                     >
                       <span className="text-sm">{program.name}</span>
                     </Link>
@@ -423,7 +410,7 @@ const Footer = () => {
               transition={{ duration: 0, delay: 0 }}
               className="lg:col-span-1"
             >
-              <h3 className="text-lg font-heading font-bold text-gradient-gold mb-6">Resources</h3>
+              <h3 className="text-lg font-semibold text-white mb-6">Resources</h3>
               <ul className="space-y-3">
                 {resources.map((resource, index) => (
                   <motion.li
@@ -435,7 +422,7 @@ const Footer = () => {
                   >
                     <Link
                       to={resource.path}
-                      className="text-white dark:text-gold hover:text-gold transition-colors flex items-center space-x-2"
+                      className="text-sky-100 hover:text-white transition-colors flex items-center space-x-2"
                     >
                       <span className="text-sm">{resource.name}</span>
                     </Link>
@@ -451,7 +438,7 @@ const Footer = () => {
               transition={{ duration: 0, delay: 0 }}
               className="lg:col-span-1"
             >
-              <h3 className="text-lg font-heading font-bold text-gradient-gold mb-6">Academic Levels</h3>
+              <h3 className="text-lg font-semibold text-white mb-6">Academic Levels</h3>
               <ul className="space-y-3">
                 {academicPrograms.slice(0, 5).map((program, index) => (
                   <motion.li
@@ -463,7 +450,7 @@ const Footer = () => {
                   >
                     <Link
                       to={program.path}
-                      className="text-white dark:text-gold hover:text-gold transition-colors flex items-center space-x-2"
+                      className="text-sky-100 hover:text-white transition-colors flex items-center space-x-2"
                     >
                       <span className="text-sm">{program.name}</span>
                     </Link>
@@ -479,7 +466,7 @@ const Footer = () => {
               transition={{ duration: 0, delay: 0 }}
               className="lg:col-span-1"
             >
-              <h3 className="text-lg font-heading font-bold text-gradient-gold mb-6">Achievements</h3>
+              <h3 className="text-lg font-semibold text-white mb-6">Achievements</h3>
               <div className="space-y-4 mb-8">
                 {achievements.map((achievement, index) => (
                   <motion.div
@@ -490,12 +477,12 @@ const Footer = () => {
                     className="flex items-start space-x-3"
                   >
                     <achievement.icon className="h-5 w-5 text-gold flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-white dark:text-gold">{achievement.text}</span>
+                    <span className="text-sm text-sky-100">{achievement.text}</span>
                   </motion.div>
                 ))}
               </div>
 
-              <h3 className="text-lg font-heading font-bold text-gradient-gold mb-4">Follow Us</h3>
+              <h3 className="text-lg font-semibold text-white mb-4">Follow Us</h3>
               <GlassIcons
                 items={[
                   { icon: <Facebook />, color: "blue", label: "Facebook", href: "#" },
@@ -512,17 +499,17 @@ const Footer = () => {
         {/* Copyright */}
         <div className="border-t border-border/30 py-6 px-4 sm:px-6">
           <div className="container-wide flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-white dark:text-gold">
+            <p className="text-sm text-sky-100">
               &copy; {currentYear} {brandingData.schoolName}. All rights reserved.
             </p>
             <div className="flex items-center space-x-4">
-              <Link to="/privacy" className="text-xs text-white dark:text-gold hover:text-gold transition-colors">
+              <Link to="/privacy" className="text-sm text-gold hover:text-white transition-colors">
                 Privacy Policy
               </Link>
-              <Link to="/terms" className="text-xs text-white dark:text-gold hover:text-gold transition-colors">
+              <Link to="/terms" className="text-sm text-gold hover:text-white transition-colors">
                 Terms of Service
               </Link>
-              <Link to="/cookies" className="text-xs text-white dark:text-gold hover:text-gold transition-colors">
+              <Link to="/cookies" className="text-sm text-gold hover:text-white transition-colors">
                 Cookie Policy
               </Link>
             </div>
