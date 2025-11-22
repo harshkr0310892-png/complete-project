@@ -283,17 +283,15 @@ const Academics = () => {
             className="text-center px-2 sm:px-0"
           >
             <Link to="/curriculum-guide">
-              <Button 
-                variant="hero" 
-                size="lg" 
-                className="group bg-gradient-to-r from-gold to-yellow-500 text-black hover:from-gold/90 hover:to-yellow-500/90 font-semibold w-full sm:w-auto transition-all duration-300"
+              <button 
+                className="curriculum-btn"
                 onClick={() => console.log('Curriculum Guide button clicked')}
               >
-                <span className="text-sm sm:text-base">View Curriculum Guide</span>
-                <span className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1">
+                <span>View Curriculum Guide</span>
+                <span className="transition-transform duration-300">
                   →
                 </span>
-              </Button>
+              </button>
             </Link>
           </motion.div>
         </div>

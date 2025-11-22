@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, GraduationCap, BookOpen, Users, Calendar, Mail, LogIn, Home, Building, Camera, Trophy, Bell, Eye, Globe } from "lucide-react";
+import { Menu, X, ChevronDown, GraduationCap, BookOpen, Users, Calendar, Mail, LogIn, Home, Building, Camera, Trophy, Bell, Eye, Globe, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button-variants";
 import { getSupabaseData } from "@/lib/supabaseHelpers";
@@ -169,6 +169,29 @@ const Navigation = () => {
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
+  // Toggle menu and add/remove a body class so we can hide page-level
+  // decorative elements while the mobile menu is open (prevents oval shapes
+  // showing through under the menu).
+  const toggleMenu = () => {
+    setIsOpen((prev) => {
+      const next = !prev;
+      try {
+        if (next) document.body.classList.add('menu-open');
+        else document.body.classList.remove('menu-open');
+      } catch (e) {
+        // ignore in SSR/non-browser environments
+      }
+      return next;
+    });
+  };
+
+  const closeMenu = () => {
+    setIsOpen(false);
+    try {
+      document.body.classList.remove('menu-open');
+    } catch (e) {}
+  };
+
   const navItems = [
     { name: t("home"), path: "/", icon: Home, description: t("homeDesc") },
     { name: t("about"), path: "/about", icon: Users, description: t("aboutDesc") },
@@ -189,19 +212,44 @@ const Navigation = () => {
 
   return (
     <motion.nav
-      className="fixed top-4 left-0 right-0 z-50 px-4 sm:px-6 transition-all duration-300"
+      className={`fixed top-4 left-0 right-0 z-50 px-4 sm:px-6 transition-all duration-300`}
       animate={{ y: 0 }}
       transition={{ duration: 0, ease: "easeOut" }}
       style={{
-        background: scrolled ? 'rgba(15, 50, 90, 0.7)' : 'transparent',
+        // Keep header visually consistent when mobile menu is open by forcing
+        // a solid, slightly opaque background. Otherwise fall back to the
+        // scrolled/transparent behaviour.
+        background: isOpen ? 'rgba(6, 18, 40, 0.95)' : (scrolled ? 'rgba(15, 50, 90, 0.7)' : 'transparent'),
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(135, 206, 250, 0.25)',
+        border: '1px solid rgba(0, 0, 0, 0.25)',
         borderRadius: '9999px',
-        boxShadow: '0 12px 30px rgba(30, 144, 255, 0.35)',
+        boxShadow: '0 12px 30px rgba(19, 20, 20, 0.35)',
         maxWidth: '1200px',
         margin: '0 auto'
       }}
     >
+      <style>{`
+        /* Header Sign Up CTA: deep-blue -> light-blue sheen */
+        .signup-cta {
+          position: relative; overflow: hidden; border-radius: 9999px; padding: 0.45rem 1rem;
+          background-image: linear-gradient(90deg,#02204a 0%, #1157d1 55%, #69a8ff 100%);
+          color: #fff !important; box-shadow: 0 8px 28px rgba(2,12,50,0.42); border: none !important;
+          display:inline-flex; align-items:center; gap: .5rem; transition: transform .18s ease, box-shadow .18s ease;
+        }
+        .signup-cta::before{ content:""; position:absolute; top:-40%; left:-35%; width:60%; height:180%; background:linear-gradient(90deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06), rgba(255,255,255,0)); transform:rotate(-25deg); transition: all .7s cubic-bezier(.2,.9,.3,1); pointer-events:none; opacity:.95 }
+        .group:hover .signup-cta{ transform: translateY(-3px) scale(1.03); box-shadow: 0 16px 36px rgba(2,12,50,0.55) }
+        .signup-cta:hover, .signup-cta:focus, .signup-cta:active {
+          background-image: linear-gradient(90deg,#02204a 0%, #1157d1 55%, #69a8ff 100%) !important;
+          background-color: #02204a !important;
+          color: #ffffff !important;
+          border: none !important;
+        }
+        .group:hover .signup-cta::before{ left: 120% }
+        .signup-cta .arrow-anim{ transition: transform .28s cubic-bezier(.2,.9,.3,1) }
+        .group:hover .signup-cta .arrow-anim{ transform: translateX(6px) }
+        @media (prefers-reduced-motion: reduce){ .signup-cta, .signup-cta::before, .signup-cta .arrow-anim{ transition:none!important } }
+      `}</style>
+
       <div className="w-full">
         <div className="flex items-center justify-between h-14 sm:h-16 px-4 sm:px-6">
 
@@ -256,7 +304,7 @@ const Navigation = () => {
                   onMouseEnter={() => setShowDropdown(true)}
                   onMouseLeave={() => setShowDropdown(false)}
                 >
-                  <div className="p-2">
+                  <div className="p-2 space-y-2">
                     {navItems.map((item, index) => (
                       <motion.div
                         key={item.path}
@@ -266,31 +314,31 @@ const Navigation = () => {
                       >
                         <Link
                           to={item.path}
-                          className={`flex items-center space-x-4 p-4 rounded-xl transition-all duration-300 group ${
+                          className={`nav-menu-item flex items-center space-x-4 p-4 transition-all duration-300 group ${
                             location.pathname === item.path
-                              ? "bg-gold/15 border border-gold/30"
-                              : "hover:bg-muted/50"
+                              ? "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border-blue-400/50"
+                              : ""
                           }`}
                           onClick={() => setShowDropdown(false)}
                         >
                           <motion.div
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             transition={{ duration: 0 }}
-                            className={`p-2 rounded-lg ${
+                            className={`nav-icon flex-shrink-0 ${
                               location.pathname === item.path
-                                ? "bg-gold text-black"
-                                : "bg-muted/30 text-muted-foreground group-hover:text-gold group-hover:bg-gold/20"
+                                ? "bg-gradient-to-br from-blue-500/30 to-cyan-500/30 border-blue-400/50"
+                                : ""
                             }`}
                           >
-                            <item.icon className="h-5 w-5" />
+                            <item.icon className="h-5 w-5 text-blue-500" />
                           </motion.div>
                           <div className="flex-1">
-                            <div className={`font-semibold ${
-                              location.pathname === item.path ? "text-gold" : "text-foreground"
+                            <div className={`nav-item-name font-semibold ${
+                              location.pathname === item.path ? "text-blue-400" : ""
                             }`}>
                               {item.name}
                             </div>
-                            <div className="text-xs text-muted-foreground">
+                            <div className="nav-item-desc text-xs text-muted-foreground">
                               {item.description}
                             </div>
                           </div>
@@ -299,7 +347,7 @@ const Navigation = () => {
                               initial={{ scale: 0 }}
                               animate={{ scale: 1 }}
                               transition={{ duration: 0 }}
-                              className="w-2 h-2 bg-gold rounded-full"
+                              className="nav-active-dot"
                             />
                           )}
                         </Link>
@@ -309,11 +357,11 @@ const Navigation = () => {
                   {/* Authentication Links */}
                 <div className="border-t border-border pt-4 mt-4">
                   <div className="text-xs font-semibold text-gold mb-3 px-4">SIGN IN</div>
-                  <Link to="/teacher" className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-medium text-foreground hover:text-gold hover:bg-gold/5" onClick={() => setIsOpen(false)}>
+                  <Link to="/teacher" className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-medium text-foreground hover:text-gold hover:bg-gold/5" onClick={closeMenu}>
                     <Users className="h-5 w-5" />
                     <div>{t("teacherLogin")}</div>
                   </Link>
-                  <Link to="/student-login" className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-medium text-foreground hover:text-gold hover:bg-gold/5" onClick={() => setIsOpen(false)}>
+                  <Link to="/student-login" className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-medium text-foreground hover:text-gold hover:bg-gold/5" onClick={closeMenu}>
                     <GraduationCap className="h-5 w-5" />
                     <div>{t("studentLogin")}</div>
                   </Link>
@@ -361,11 +409,12 @@ const Navigation = () => {
                 );
               }
 
-              // Show Sign Up button if not logged in
+              // Show Sign Up button if not logged in (styled CTA)
               return (
-                <Link to="/auth" className="hidden sm:block">
-                  <Button variant="outline" size="sm" className="bg-gradient-to-r from-gold/10 to-yellow-500/10 hover:from-gold/20 hover:to-yellow-500/20 border-gold/30 text-gold hover:text-gold/80 transition-all duration-300">
-                    {t("signUp")}
+                <Link to="/auth" className="hidden sm:block group">
+                  <Button variant="outline" size="sm" className="signup-cta">
+                    <span className="font-medium">{t("signUp")}</span>
+                    <ArrowRight className="h-4 w-4 arrow-anim" />
                   </Button>
                 </Link>
               );
@@ -513,15 +562,25 @@ const Navigation = () => {
             </div>
 
             {/* Mobile Menu Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-2 sm:hidden"
-              aria-label="Toggle menu"
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+                <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleMenu}
+                className="p-2 sm:hidden"
+                aria-label="Toggle menu"
+              >
+                <motion.div
+                  animate={{ rotate: isOpen ? 90 : 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
+                  {isOpen ? <X className="h-5 w-5 text-red-400" /> : <Menu className="h-5 w-5 text-blue-400" />}
+                </motion.div>
+              </Button>
+            </motion.div>
           </div>
         </div>
 
@@ -529,10 +588,10 @@ const Navigation = () => {
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0 }}
+              initial={{ opacity: 0, height: 0, y: -20 }}
+              animate={{ opacity: 1, height: "auto", y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -20 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
               className="sm:hidden border-t border-blue-400/30 bg-gradient-to-b from-blue-950/80 to-blue-900/60 backdrop-blur-xl"
             >
               <div className="p-4 space-y-1 max-h-[70vh] overflow-y-auto">
@@ -550,7 +609,7 @@ const Navigation = () => {
                           ? "bg-gold/15 text-gold border border-gold/30"
                           : "hover:bg-muted/50"
                       }`}
-                      onClick={() => setIsOpen(false)}
+                      onClick={closeMenu}
                     >
                       <item.icon className="h-5 w-5 flex-shrink-0" />
                       <span className="font-medium">{item.name}</span>
@@ -567,7 +626,7 @@ const Navigation = () => {
 
                     if (teacherAuth) {
                       return (
-                        <Link to="/teacher-dashboard" className="flex items-center space-x-3 p-3 rounded-lg transition-colors hover:bg-muted/50" onClick={() => setIsOpen(false)}>
+                        <Link to="/teacher-dashboard" className="flex items-center space-x-3 p-3 rounded-lg transition-colors hover:bg-muted/50" onClick={closeMenu}>
                           <Users className="h-5 w-5" />
                           <div>
                             <div className="font-medium">{t("teacherDashboard")}</div>
@@ -579,7 +638,7 @@ const Navigation = () => {
 
                     if (studentAuth) {
                       return (
-                        <Link to="/student-dashboard" className="flex items-center space-x-3 p-3 rounded-lg transition-colors hover:bg-muted/50" onClick={() => setIsOpen(false)}>
+                        <Link to="/student-dashboard" className="flex items-center space-x-3 p-3 rounded-lg transition-colors hover:bg-muted/50" onClick={closeMenu}>
                           <GraduationCap className="h-5 w-5" />
                           <div>
                             <div className="font-medium">{t("studentDashboard")}</div>
@@ -590,7 +649,7 @@ const Navigation = () => {
                     }
 
                     return (
-                      <Link to="/auth" className="flex items-center space-x-3 p-3 rounded-lg transition-colors hover:bg-muted/50" onClick={() => setIsOpen(false)}>
+                      <Link to="/auth" className="signin-btn flex items-center space-x-3" onClick={closeMenu}>
                         <LogIn className="h-5 w-5" />
                         <div>
                           <div className="font-medium">Sign In</div>

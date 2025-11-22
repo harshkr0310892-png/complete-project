@@ -184,6 +184,68 @@ const Hero = () => {
         .animate-pulse-soft {
           animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+
+        /* Hero CTA button styles */
+        .btn-blue {
+          --btn-gradient-from: #0ea5e9; /* sky-500 */
+          --btn-gradient-to: #6366f1;   /* indigo-500 */
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          padding: 0.7rem 1.15rem;
+          border-radius: 12px;
+          font-weight: 600;
+          color: white !important;
+          background: linear-gradient(90deg, var(--btn-gradient-from), var(--btn-gradient-to));
+          box-shadow: 0 8px 24px rgba(99,102,241,0.18), 0 2px 6px rgba(14,165,233,0.06);
+          position: relative;
+          overflow: hidden;
+          transition: transform 220ms cubic-bezier(.2,.9,.3,1), box-shadow 220ms ease, filter 220ms ease;
+        }
+        .btn-blue:before {
+          content: '';
+          position: absolute;
+          inset: -40% -20% auto -20%;
+          height: 200%;
+          background: linear-gradient(120deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.0) 60%);
+          transform: translateX(-80%) rotate(-12deg);
+          transition: transform 900ms cubic-bezier(.2,.9,.3,1), opacity 500ms ease;
+          opacity: 0.9;
+          pointer-events: none;
+        }
+        .btn-blue:hover {
+          transform: translateY(-4px) scale(1.01);
+          box-shadow: 0 14px 40px rgba(99,102,241,0.22), 0 6px 18px rgba(14,165,233,0.08);
+          filter: saturate(1.05);
+        }
+        .btn-blue:hover:before { transform: translateX(10%) rotate(-12deg); }
+
+        .btn-light-blue {
+          --btn-from: rgba(255,255,255,0.06);
+          --btn-to: rgba(255,255,255,0.02);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          padding: 0.64rem 1rem;
+          border-radius: 12px;
+          font-weight: 600;
+          color: #e6f4ff !important;
+          background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), linear-gradient(90deg, rgba(14,165,233,0.08), rgba(99,102,241,0.06));
+          border: 1px solid rgba(255,255,255,0.06);
+          box-shadow: 0 6px 18px rgba(7,89,133,0.12);
+          position: relative;
+          transition: transform 200ms ease, box-shadow 200ms ease;
+        }
+        .btn-light-blue:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(7,89,133,0.16); }
+
+        /* small accent for icons/arrows inside group */
+        .group .arrow-animate { transition: transform 220ms ease; }
+        .group:hover .arrow-animate { transform: translateX(6px); }
+
+        /* make sure links inside keep center alignment */
+        .btn-blue .group, .btn-light-blue .group { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; }
       `}</style>
 
       {/* Background with banner image rotation */}
@@ -223,14 +285,14 @@ const Hero = () => {
 
           {/* Call to Action */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 justify-center items-center pt-4 sm:pt-8 px-2 sm:px-0">
-            <Button variant="hero" size="lg" asChild className="w-full sm:w-auto">
-              <Link to="/admissions" className="group">
-                {homepageData.heroButtonPrimary}
-                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+            <Button size="lg" asChild className="w-full sm:w-auto btn-blue">
+                  <Link to="/admissions" className="group flex items-center justify-center">
+                  {homepageData.heroButtonPrimary}
+                  <ArrowRight className="arrow-animate ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                </Link>
             </Button>
-            <Button variant="outline" size="lg" asChild className="w-full sm:w-auto">
-              <Link to="/about">
+            <Button size="lg" asChild className="w-full sm:w-auto btn-light-blue">
+              <Link to="/about" className="flex items-center justify-center">
                 {homepageData.heroButtonSecondary}
               </Link>
             </Button>

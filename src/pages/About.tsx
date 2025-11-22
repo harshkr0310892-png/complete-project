@@ -212,7 +212,7 @@ const About = () => {
             <Button
               variant="ghost"
               onClick={() => navigate(-1)}
-              className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
+              className="back-btn flex items-center space-x-2"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Back</span>

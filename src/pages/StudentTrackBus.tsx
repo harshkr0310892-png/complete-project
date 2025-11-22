@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { getSupabaseData, subscribeToSupabaseChanges } from '@/lib/supabaseHelpers';
 import { Bus, MapPin, Navigation, Crosshair, ArrowLeft, Star, AlertCircle, Check } from 'lucide-react';
-import Compass from '@/components/Compass';
 import DocumentViewer from '@/components/DocumentViewer';
 
 interface Assignment {
@@ -501,7 +500,7 @@ const StudentTrackBus: React.FC = () => {
       }
     };
     
-    const interval = setInterval(updateLocation, 50);
+    const interval = setInterval(updateLocation, 100);
     return () => clearInterval(interval);
   }, [autoTracking, busLoc]);
 
@@ -536,7 +535,7 @@ const StudentTrackBus: React.FC = () => {
       } catch (e) {
         console.error('Failed to fetch bus location:', e);
       }
-    }, 50);
+    }, 100);
 
     return () => clearInterval(interval);
   }, [myAssignment?.busId, myAssignment, busLoc]);
@@ -760,18 +759,7 @@ const StudentTrackBus: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Navigation className="h-5 w-5" />
-                    Bus Direction
-                  </CardTitle>
-                  <CardDescription>Current heading of your bus</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Compass busLocation={busLoc} previousLocation={previousBusLoc} />
-                </CardContent>
-              </Card>
+
             </div>
 
             {messages.length > 0 && (

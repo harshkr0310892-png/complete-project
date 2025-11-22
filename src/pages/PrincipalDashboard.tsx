@@ -29,7 +29,8 @@ import {
   Mail,
   Copy,
   Image as ImageIcon,
-  Trash2
+  Trash2,
+  Download
 } from "lucide-react";
 import { Bus } from "lucide-react";
 import { Button } from "@/components/ui/button-variants";
@@ -112,6 +113,7 @@ interface PrincipalRemark {
   principalId: string;
   principalName: string;
   createdAt: string;
+  images?: string[];
 }
 
 interface FeeRecord {
@@ -273,7 +275,8 @@ const PrincipalDashboard = () => {
     studentId: '',
     type: 'good' as 'good' | 'bad',
     message: '',
-    subject: ''
+    subject: '',
+    images: [] as string[]
   });
   const [principalRemarkFilters, setPrincipalRemarkFilters] = useState({
     class: '',
@@ -317,6 +320,33 @@ const PrincipalDashboard = () => {
   const [showSentNotificationsModal, setShowSentNotificationsModal] = useState(false);
   const [editingStudentNotification, setEditingStudentNotification] = useState<any>(null);
   const [showEditStudentNotificationModal, setShowEditStudentNotificationModal] = useState(false);
+
+  // Report viewing state
+  const [showReportViewerModal, setShowReportViewerModal] = useState(false);
+  const [selectedReportImage, setSelectedReportImage] = useState<string | null>(null);
+  const [selectedReportDetails, setSelectedReportDetails] = useState<StudentReport | null>(null);
+
+  // Remark image viewer state
+  const [showRemarkImageViewerModal, setShowRemarkImageViewerModal] = useState(false);
+  const [selectedRemarkImages, setSelectedRemarkImages] = useState<string[]>([]);
+  const [currentRemarkImageIndex, setCurrentRemarkImageIndex] = useState(0);
+  const [selectedRemarkDetails, setSelectedRemarkDetails] = useState<PrincipalRemark | null>(null);
+
+  // Helper: convert file to base64
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
+  // Teacher remark image viewer state
+  const [showTeacherRemarkImageViewerModal, setShowTeacherRemarkImageViewerModal] = useState(false);
+  const [selectedTeacherRemarkImages, setSelectedTeacherRemarkImages] = useState<string[]>([]);
+  const [currentTeacherRemarkImageIndex, setCurrentTeacherRemarkImageIndex] = useState(0);
+  const [selectedTeacherRemarkDetails, setSelectedTeacherRemarkDetails] = useState<any>(null);
 
   // Load realtime bus principal messages
   useEffect(() => {
@@ -905,11 +935,20 @@ Teacher ID: ${teacherId}`);
       }
     );
 
+    const unsubscribeStudentReports = subscribeToSupabaseChanges<StudentReport[]>(
+      'royal-academy-student-reports',
+      (newData) => {
+        console.log('[PrincipalDashboard] Received realtime student reports update');
+        setStudentReports(newData || []);
+      }
+    );
+
     return () => {
       unsubscribeAdmissions();
       unsubscribeTeachers();
       unsubscribeAdmissionStatus();
       unsubscribeContactForms();
+      unsubscribeStudentReports();
     };
   }, []);
 
@@ -989,19 +1028,21 @@ Teacher ID: ${teacherId}`);
       subject: principalRemarksForm.subject || 'General',
       principalId: principalEmail,
       principalName: 'Principal',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      images: principalRemarksForm.images || []
     };
 
-    // Save to localStorage
+    // Save to localStorage and persist
     const existingRemarks = JSON.parse(localStorage.getItem('royal-academy-principal-remarks') || '[]');
     const updatedRemarks = [...existingRemarks, newRemark];
     localStorage.setItem('royal-academy-principal-remarks', JSON.stringify(updatedRemarks));
     setPrincipalRemarksData(updatedRemarks);
+    setSupabaseData('royal-academy-principal-remarks', updatedRemarks).catch(err => console.error('Failed to save principal remarks to Supabase', err));
 
     alert(`${principalRemarksForm.type === 'good' ? 'Good' : 'Bad'} remark sent to ${selectedStudent.name} successfully!`);
 
     // Reset form
-    setPrincipalRemarksForm({ studentId: '', type: 'good', message: '', subject: '' });
+    setPrincipalRemarksForm({ studentId: '', type: 'good', message: '', subject: '', images: [] });
     setShowPrincipalRemarksModal(false);
   };
 
@@ -4276,7 +4317,7 @@ Teacher ID: ${teacherId}`);
                     size="sm"
                     onClick={() => {
                       setShowPrincipalRemarksModal(false);
-                      setPrincipalRemarksForm({ studentId: '', type: 'good', message: '', subject: '' });
+                      setPrincipalRemarksForm({ studentId: '', type: 'good', message: '', subject: '', images: [] });
                     }}
                     className="h-8 w-8 p-0"
                   >
@@ -4405,13 +4446,60 @@ Teacher ID: ${teacherId}`);
                     />
                   </div>
 
+                  {/* Attach Images (up to 4) */}
+                  <div>
+                    <label className="block text-xs sm:text-sm font-medium mb-2">Attach Photos (optional, max 4)</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={async (e) => {
+                        const files = e.target.files;
+                        if (!files) return;
+                        const current = principalRemarksForm.images || [];
+                        const toAdd = Array.from(files).slice(0, 4 - current.length);
+                        const base64s: string[] = [];
+                        for (const f of toAdd) {
+                          if (!f.type.startsWith('image/')) continue;
+                          try {
+                            const b = await convertToBase64(f);
+                            base64s.push(b);
+                          } catch (err) {
+                            console.error('Failed to convert image', err);
+                          }
+                        }
+                        setPrincipalRemarksForm(prev => ({ ...prev, images: [...(prev.images || []), ...base64s] }));
+                        // clear input
+                        (e.target as HTMLInputElement).value = '';
+                      }}
+                      className="w-full text-xs"
+                    />
+
+                    {principalRemarksForm.images && principalRemarksForm.images.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {principalRemarksForm.images.map((img, idx) => (
+                          <div key={idx} className="relative">
+                            <img src={img} alt={`remark-${idx}`} className="w-16 h-16 object-cover rounded-lg border border-border/30" />
+                            <button
+                              type="button"
+                              onClick={() => setPrincipalRemarksForm(prev => ({ ...prev, images: prev.images?.filter((_, i) => i !== idx) || [] }))}
+                              className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-2 pt-2">
                     <Button
                       variant="outline"
                       onClick={() => {
                         setShowPrincipalRemarksModal(false);
-                        setPrincipalRemarksForm({ studentId: '', type: 'good', message: '', subject: '' });
+                        setPrincipalRemarksForm({ studentId: '', type: 'good', message: '', subject: '', images: [] });
                       }}
                       className="flex-1 min-h-[44px] text-sm"
                     >
@@ -4704,13 +4792,19 @@ Teacher ID: ${teacherId}`);
                                     {remark.message}
                                   </p>
                                   {remark.images && remark.images.length > 0 && (
-                                    <div className="flex flex-wrap gap-2 mt-2">
+                                    <div className="flex flex-wrap gap-2 mt-2 items-center">
                                       {remark.images.map((img: string, idx: number) => (
                                         <img
                                           key={idx}
                                           src={img}
                                           alt={`Remark attachment ${idx + 1}`}
-                                          className="w-16 h-16 object-cover rounded-lg border border-border/40"
+                                          className="w-16 h-16 object-cover rounded-lg border border-border/40 cursor-pointer hover:opacity-80 transition-opacity"
+                                          onClick={() => {
+                                            setSelectedTeacherRemarkImages(remark.images || []);
+                                            setCurrentTeacherRemarkImageIndex(idx);
+                                            setSelectedTeacherRemarkDetails(remark);
+                                            setShowTeacherRemarkImageViewerModal(true);
+                                          }}
                                         />
                                       ))}
                                     </div>
@@ -4747,6 +4841,22 @@ Teacher ID: ${teacherId}`);
                                   <p className="text-xs text-muted-foreground mt-1 whitespace-pre-line">
                                     {remark.message}
                                   </p>
+                                  {remark.images && remark.images.length > 0 && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="mt-2 w-full text-xs"
+                                      onClick={() => {
+                                        setSelectedRemarkImages(remark.images || []);
+                                        setCurrentRemarkImageIndex(0);
+                                        setSelectedRemarkDetails(remark);
+                                        setShowRemarkImageViewerModal(true);
+                                      }}
+                                    >
+                                      <Eye className="h-3 w-3 mr-1" />
+                                      View Images ({remark.images.length})
+                                    </Button>
+                                  )}
                                 </div>
                               ))}
                             </div>
@@ -4782,7 +4892,11 @@ Teacher ID: ${teacherId}`);
                                     <Button
                                       size="sm"
                                       variant="outline"
-                                      onClick={() => window.open(report.reportImage, '_blank')}
+                                      onClick={() => {
+                                        setSelectedReportImage(report.reportImage);
+                                        setSelectedReportDetails(report);
+                                        setShowReportViewerModal(true);
+                                      }}
                                     >
                                       View Report
                                     </Button>
@@ -5324,6 +5438,273 @@ Teacher ID: ${teacherId}`);
               </div>
             </motion.div>
           )}
+
+        {/* Report Viewer Modal */}
+        {showReportViewerModal && selectedReportImage && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-card rounded-xl w-full max-w-2xl border border-border/50 overflow-hidden max-h-[90vh] flex flex-col"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-border/30">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">Report Card</h3>
+                  {selectedReportDetails && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {selectedReportDetails.subject} - By {selectedReportDetails.teacherName}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setShowReportViewerModal(false);
+                    setSelectedReportImage(null);
+                    setSelectedReportDetails(null);
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Image Container */}
+              <div className="flex-1 overflow-auto bg-black/20 flex items-center justify-center p-4">
+                <img 
+                  src={selectedReportImage} 
+                  alt="Report Card" 
+                  className="max-w-full max-h-[calc(90vh-200px)] object-contain rounded-lg"
+                />
+              </div>
+
+              {/* Footer with notes and download */}
+              {selectedReportDetails && (
+                <div className="border-t border-border/30 p-4 bg-muted/20">
+                  {selectedReportDetails.notes && (
+                    <div className="mb-3">
+                      <p className="text-xs font-semibold text-muted-foreground mb-1">Notes:</p>
+                      <p className="text-sm text-foreground">{selectedReportDetails.notes}</p>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(selectedReportDetails.createdAt).toLocaleDateString()} at {new Date(selectedReportDetails.createdAt).toLocaleTimeString()}
+                    </p>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const link = document.createElement('a');
+                        link.href = selectedReportImage;
+                        link.download = `report-${selectedReportDetails.studentName}-${new Date(selectedReportDetails.createdAt).getTime()}.png`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+
+        {/* Remark Image Viewer Modal */}
+        {showRemarkImageViewerModal && selectedRemarkImages.length > 0 && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-card rounded-xl w-full max-w-2xl border border-border/50 overflow-hidden max-h-[90vh] flex flex-col"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-border/30">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">Remark Images</h3>
+                  {selectedRemarkDetails && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {selectedRemarkDetails.subject || 'General'} - {selectedRemarkDetails.type === 'good' ? 'Good' : 'Bad'} Remark
+                    </p>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setShowRemarkImageViewerModal(false);
+                    setSelectedRemarkImages([]);
+                    setCurrentRemarkImageIndex(0);
+                    setSelectedRemarkDetails(null);
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Image Container */}
+              <div className="flex-1 overflow-auto bg-black/20 flex items-center justify-center p-4">
+                <img 
+                  src={selectedRemarkImages[currentRemarkImageIndex]} 
+                  alt={`Remark image ${currentRemarkImageIndex + 1}`}
+                  className="max-w-full max-h-[calc(90vh-200px)] object-contain rounded-lg"
+                />
+              </div>
+
+              {/* Footer with navigation and details */}
+              <div className="border-t border-border/30 p-4 bg-muted/20">
+                {selectedRemarkDetails && (
+                  <div className="mb-3">
+                    <p className="text-xs text-muted-foreground mb-1">Message:</p>
+                    <p className="text-sm text-foreground whitespace-pre-line line-clamp-2">{selectedRemarkDetails.message}</p>
+                  </div>
+                )}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {selectedRemarkImages.length > 1 && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setCurrentRemarkImageIndex(Math.max(0, currentRemarkImageIndex - 1))}
+                          disabled={currentRemarkImageIndex === 0}
+                        >
+                          Previous
+                        </Button>
+                        <span className="text-xs text-muted-foreground px-2">
+                          {currentRemarkImageIndex + 1} / {selectedRemarkImages.length}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setCurrentRemarkImageIndex(Math.min(selectedRemarkImages.length - 1, currentRemarkImageIndex + 1))}
+                          disabled={currentRemarkImageIndex === selectedRemarkImages.length - 1}
+                        >
+                          Next
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const link = document.createElement('a');
+                      link.href = selectedRemarkImages[currentRemarkImageIndex];
+                      link.download = `remark-${selectedRemarkDetails?.studentName}-${currentRemarkImageIndex + 1}-${new Date(selectedRemarkDetails?.createdAt || '').getTime()}.png`;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Teacher Remark Image Viewer Modal */}
+        {showTeacherRemarkImageViewerModal && selectedTeacherRemarkImages.length > 0 && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-card rounded-xl w-full max-w-2xl border border-border/50 overflow-hidden max-h-[90vh] flex flex-col"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-border/30">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">Teacher Remark Images</h3>
+                  {selectedTeacherRemarkDetails && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {selectedTeacherRemarkDetails.subject || 'General'} - {selectedTeacherRemarkDetails.type === 'good' ? 'Good' : 'Bad'} Remark
+                    </p>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setShowTeacherRemarkImageViewerModal(false);
+                    setSelectedTeacherRemarkImages([]);
+                    setCurrentTeacherRemarkImageIndex(0);
+                    setSelectedTeacherRemarkDetails(null);
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Image Container */}
+              <div className="flex-1 overflow-auto bg-black/20 flex items-center justify-center p-4">
+                <img 
+                  src={selectedTeacherRemarkImages[currentTeacherRemarkImageIndex]} 
+                  alt={`Teacher remark image ${currentTeacherRemarkImageIndex + 1}`}
+                  className="max-w-full max-h-[calc(90vh-200px)] object-contain rounded-lg"
+                />
+              </div>
+
+              {/* Footer with navigation and details */}
+              <div className="border-t border-border/30 p-4 bg-muted/20">
+                {selectedTeacherRemarkDetails && (
+                  <div className="mb-3">
+                    <p className="text-xs text-muted-foreground mb-1">Message:</p>
+                    <p className="text-sm text-foreground whitespace-pre-line line-clamp-2">{selectedTeacherRemarkDetails.message}</p>
+                  </div>
+                )}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {selectedTeacherRemarkImages.length > 1 && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setCurrentTeacherRemarkImageIndex(Math.max(0, currentTeacherRemarkImageIndex - 1))}
+                          disabled={currentTeacherRemarkImageIndex === 0}
+                        >
+                          Previous
+                        </Button>
+                        <span className="text-xs text-muted-foreground px-2">
+                          {currentTeacherRemarkImageIndex + 1} / {selectedTeacherRemarkImages.length}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setCurrentTeacherRemarkImageIndex(Math.min(selectedTeacherRemarkImages.length - 1, currentTeacherRemarkImageIndex + 1))}
+                          disabled={currentTeacherRemarkImageIndex === selectedTeacherRemarkImages.length - 1}
+                        >
+                          Next
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const link = document.createElement('a');
+                      link.href = selectedTeacherRemarkImages[currentTeacherRemarkImageIndex];
+                      link.download = `teacher-remark-${selectedTeacherRemarkDetails?.studentName || 'unknown'}-${currentTeacherRemarkImageIndex + 1}-${new Date(selectedTeacherRemarkDetails?.date || '').getTime()}.png`;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
 
         {/* Document Viewer Modal */}
         {documentViewer.show && (

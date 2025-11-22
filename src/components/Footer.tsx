@@ -113,12 +113,12 @@ const Footer = () => {
     <div className="sm:hidden border-b border-border/30 last:border-b-0">
       <button
         onClick={() => toggleSection(sectionKey)}
-        className="w-full flex items-center justify-between py-4 px-2 text-left"
+        className="w-full flex items-center justify-between py-4 px-2 text-left hover:bg-white/5 transition-colors duration-200 rounded-md"
       >
         <h3 className="text-lg font-heading font-bold text-gradient-gold">{title}</h3>
         <motion.div
           animate={{ rotate: expandedSections[sectionKey] ? 180 : 0 }}
-          transition={{ duration: 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
         >
           {expandedSections[sectionKey] ? (
             <Minus className="h-5 w-5 text-gold" />
@@ -130,15 +130,20 @@ const Footer = () => {
       <AnimatePresence>
         {expandedSections[sectionKey] && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0 }}
+            initial={{ height: 0, opacity: 0, y: -10 }}
+            animate={{ height: "auto", opacity: 1, y: 0 }}
+            exit={{ height: 0, opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="pb-4 px-2">
+            <motion.div 
+              className="pb-4 px-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.15, duration: 0.3 }}
+            >
               {children}
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -146,8 +151,8 @@ const Footer = () => {
   );
 
   return (
-    <footer className="relative text-white overflow-hidden transition-all duration-300" style={{ borderTopLeftRadius: '24px', borderTopRightRadius: '24px', background: 'linear-gradient(180deg,#042a6b 0%, #38bdf8 50%, #f59e0b 100%)' }}>
-      {/* Simplified classic background (red + purple mix) */}
+    <footer className="animated-footer relative text-white overflow-hidden transition-all duration-300" style={{ borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}>
+      {/* Animated Blue Gradient Background */}
       <div className="relative z-10">
         {/* Main Footer Content */}
         <div className="container-wide py-6 sm:py-12 px-4 sm:px-6">

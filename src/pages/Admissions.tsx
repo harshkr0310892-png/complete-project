@@ -828,29 +828,46 @@ Status: ${record.paymentStatus}`);
                   {admissionsData?.hero?.subtitle || "Join a vibrant, supportive community. Our application is fast, holistic, and designed to highlight what makes you, you."}
                 </p>
                 <div className="flex flex-wrap gap-4 mb-12">
-                  <Button
-                    variant="hero"
-                    size="xl"
+                  <style>{`
+                    /* Admissions CTA styles */
+                    .apply-cta {
+                      display: inline-flex; align-items:center; gap:.6rem; padding:.8rem 1.25rem;
+                      border-radius: 12px; font-weight:700; cursor:pointer; position:relative;
+                      background-image: linear-gradient(90deg,#08345a 0%, #1b6fe8 55%, #8fc3ff 100%) !important;
+                      color: #fff !important; box-shadow: 0 10px 30px rgba(8,52,90,0.35) !important;
+                      transition: transform .22s cubic-bezier(.2,.9,.3,1), box-shadow .22s, filter .22s;
+                    }
+                    .apply-cta.closed { background-image: linear-gradient(90deg,#8b2d2d, #c93a3a) !important; color:#fff !important }
+                    .apply-cta::after{ content:''; position:absolute; inset:0; border-radius:12px; pointer-events:none }
+                    .apply-cta:hover{ transform: translateY(-4px); box-shadow: 0 20px 50px rgba(8,52,90,0.45) !important; background-image: linear-gradient(90deg,#08345a 0%, #1b6fe8 55%, #8fc3ff 100%) !important; color:#fff !important }
+
+                    .contact-cta{ display:inline-flex; align-items:center; gap:.5rem; padding:.6rem 1rem; border-radius:10px; font-weight:700; background: linear-gradient(90deg,#1f2937 0%, #0b6596 100%) !important; color:#ffd27a !important; box-shadow: 0 8px 22px rgba(11,101,150,0.18) !important; transition: transform .18s ease, filter .18s; }
+                    .contact-cta:hover{ transform: translateY(-3px) scale(1.02); filter:brightness(1.05); background: linear-gradient(90deg,#1f2937 0%, #0b6596 100%) !important; color:#ffd27a !important }
+
+                    .explore-cta a{ display:inline-block; padding:.5rem .9rem; border-radius:8px; background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); color: #cfe8ff; font-weight:600; border:1px solid rgba(255,255,255,0.04); transition: transform .14s ease, background .14s ease; }
+                    .explore-cta a:hover{ transform: translateY(-2px); background: rgba(25,80,120,0.12); }
+
+                    @media (prefers-reduced-motion: reduce){ .apply-cta, .contact-cta, .explore-cta a{ transition:none !important } }
+                  `}</style>
+                  <button
+                    type="button"
                     onClick={handleApplyNowClick}
-                    className={`font-bold shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-sky-400 hover:border-sky-500 ${
-                      admissionStatus
-                        ? 'text-yellow-600 bg-transparent hover:bg-sky-50'
-                        : 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700'
-                    }`}
+                    className={`apply-cta relative ${admissionStatus ? '' : 'closed'}`}
                   >
                     {admissionStatus ? 'Apply Now - Start your application' : 'Admissions Currently Closed'}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="xl"
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setShowContactModal(true)}
-                    className="text-yellow-600 font-bold border-2 border-sky-400 hover:border-sky-500 bg-transparent hover:bg-sky-50"
+                    className="contact-cta"
                   >
                     Contact Admissions
-                  </Button>
-                  <Button variant="ghost" size="xl" asChild>
-                    <a href="#process">Explore the process</a>
-                  </Button>
+                  </button>
+                  <div className="explore-cta">
+                    <a href="#process" className="inline-block">
+                      <span className="text-cfe8ff font-semibold">Explore the process</span>
+                    </a>
+                  </div>
                 </div>
               </motion.div>
 
@@ -896,8 +913,9 @@ Status: ${record.paymentStatus}`);
                 transition={{ duration: 0.4 }}
                 className="relative aspect-[4/3] rounded-2xl bg-gradient-to-br from-card to-muted/20 overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-gold/10 via-transparent to-crimson/10" />
-                <div className="absolute top-4 right-4 w-16 h-16 rounded-full bg-gradient-to-br from-gold/30 to-crimson/30 blur-sm" />
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-red-500/10" />
+                <div className="absolute top-4 right-4 w-16 h-16 rounded-full bg-gradient-to-br from-blue-400/40 to-purple-500/40 blur-lg animate-pulse" />
+                <div className="absolute bottom-4 left-4 w-12 h-12 rounded-full bg-gradient-to-br from-purple-400/40 to-red-500/40 blur-md animate-pulse" style={{ animationDelay: '0.5s' }} />
               </motion.div>
             </div>
           </div>
@@ -916,7 +934,7 @@ Status: ${record.paymentStatus}`);
             <div className="text-sm font-bold text-gold uppercase tracking-wider mb-4">
               {admissionsData?.process?.title || "How it works"}
             </div>
-            <h2 className="text-4xl font-heading font-bold mb-6">
+            <h2 className="text-4xl font-heading font-bold mb-6 bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 bg-clip-text text-transparent animate-pulse">
               {admissionsData?.process?.subtitle || "Your path to admission"}
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -925,45 +943,56 @@ Status: ${record.paymentStatus}`);
           </motion.div>
 
           <div className="relative">
-            {/* Timeline Line */}
-            <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-gold to-crimson opacity-30 hidden lg:block" />
+            {/* Timeline Line - Enhanced with animated gradient */}
+            <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-red-500 opacity-50 hidden lg:block shadow-lg shadow-blue-500/30" />
 
             <div className="space-y-8">
-              {(admissionsData?.process?.steps || admissionProcess).map((step, index) => (
-                <motion.div
-                  key={step.title}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
-                >
-                  {/* Step Number */}
-                  <div className="lg:col-span-2 flex justify-center lg:justify-start">
-                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-gold to-crimson flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                      {index + 1}
-                      <div className="absolute inset-0 rounded-full border-2 border-dashed border-gold/40" />
-                    </div>
-                  </div>
+              {(admissionsData?.process?.steps || admissionProcess).map((step, index) => {
+                // Determine animation class based on step index
+                const animationClasses = [
+                  'admission-step-circle-blue',
+                  'admission-step-circle-purple',
+                  'admission-step-circle-blue',
+                  'admission-step-circle-purple'
+                ];
+                const selectedAnimation = animationClasses[index % animationClasses.length];
 
-                  {/* Content */}
+                return (
+                  <motion.div
+                    key={step.title}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
+                  >
+                    {/* Step Number - Animated */}
+                    <div className="lg:col-span-2 flex justify-center lg:justify-start">
+                      <div className={`relative w-16 h-16 rounded-full ${selectedAnimation} flex items-center justify-center text-white font-bold text-xl shadow-lg`}>
+                        {index + 1}
+                        <div className="absolute inset-0 rounded-full border-2 border-dashed border-white/40 animate-pulse" />
+                      </div>
+                    </div>
+
+                    {/* Content */}
                   <div className="lg:col-span-10">
-                    <div className="card-3d p-8">
+                    <div className="card-3d p-8 bg-gradient-to-r from-blue-500/5 via-transparent to-purple-500/5 border border-blue-500/20 hover:border-purple-500/40 transition-all duration-300">
                       <div className="flex items-start justify-between mb-4">
-                        <h3 className="text-2xl font-heading font-bold text-gradient-gold">{step.title}</h3>
-                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                          <Clock className="h-4 w-4" />
+                        <h3 className="text-2xl font-heading font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{step.title}</h3>
+                        <div className="flex items-center space-x-2 text-sm text-muted-foreground bg-purple-500/10 px-3 py-1 rounded-full">
+                          <Clock className="h-4 w-4 text-purple-500" />
                           <span>{step.timeline}</span>
                         </div>
                       </div>
                       <p className="text-muted-foreground leading-relaxed mb-4">{step.description}</p>
                       <div className="flex flex-wrap gap-2">
-                        <span className="px-3 py-1 bg-gold/10 text-gold rounded-full text-sm font-medium">Secure</span>
-                        <span className="px-3 py-1 bg-crimson/10 text-crimson rounded-full text-sm font-medium">Save-as-you-go</span>
+                        <span className="px-3 py-1 bg-blue-500/20 text-blue-600 rounded-full text-sm font-medium border border-blue-500/40">Secure</span>
+                        <span className="px-3 py-1 bg-purple-500/20 text-purple-600 rounded-full text-sm font-medium border border-purple-500/40">Save-as-you-go</span>
                       </div>
                     </div>
                   </div>
                 </motion.div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -978,10 +1007,10 @@ Status: ${record.paymentStatus}`);
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <div className="text-sm font-bold text-gold uppercase tracking-wider mb-4">
+            <div className="text-sm font-bold text-blue-500 uppercase tracking-wider mb-4">
               {admissionsData?.requirements?.title || "Requirements"}
             </div>
-            <h2 className="text-4xl font-heading font-bold mb-6">
+            <h2 className="text-4xl font-heading font-bold mb-6 bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-600 bg-clip-text text-transparent animate-pulse">
               {admissionsData?.requirements?.subtitle || "What you'll need to apply"}
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -1005,9 +1034,9 @@ Status: ${record.paymentStatus}`);
                   type: "spring",
                   stiffness: 300
                 }}
-                className="card-3d p-8"
+                className="card-3d p-8 bg-gradient-to-br from-blue-500/10 to-cyan-500/5 border border-blue-500/20 hover:border-blue-400/50 transition-all duration-300"
               >
-                <h3 className="text-2xl font-heading font-semibold mb-6 text-gradient-gold">{req.title || req.category}</h3>
+                <h3 className="text-2xl font-heading font-semibold mb-6 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">{req.title || req.category}</h3>
                 <div className="space-y-4">
                   {(req.items || []).map((item, idx) => (
                     <motion.div
@@ -1021,9 +1050,9 @@ Status: ${record.paymentStatus}`);
                         whileHover={{ scale: 1.2, rotate: 360 }}
                         transition={{ duration: 0.3 }}
                       >
-                        <CheckCircle className="h-5 w-5 text-gold flex-shrink-0" />
+                        <CheckCircle className="h-5 w-5 text-blue-500 flex-shrink-0" />
                       </motion.div>
-                      <span className="text-muted-foreground group-hover:text-foreground transition-colors">{item}</span>
+                      <span className="text-muted-foreground group-hover:text-blue-400 transition-colors">{item}</span>
                     </motion.div>
                   ))}
                 </div>
@@ -1055,9 +1084,9 @@ Status: ${record.paymentStatus}`);
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="card-3d p-6"
+                className="card-3d p-6 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-blue-500/10 border border-blue-500/20 hover:border-purple-400/50 transition-all duration-300"
               >
-                <h3 className="text-xl font-heading font-semibold mb-4 text-gradient-gold">{section.title}</h3>
+                <h3 className="text-xl font-heading font-semibold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{section.title}</h3>
                 <p className="text-muted-foreground">{section.description}</p>
               </motion.div>
             ))}
@@ -1074,10 +1103,10 @@ Status: ${record.paymentStatus}`);
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <div className="text-sm font-bold text-gold uppercase tracking-wider mb-4">
+            <div className="text-sm font-bold text-yellow-500 uppercase tracking-wider mb-4">
               {admissionsData?.dates?.title || "Important dates"}
             </div>
-            <h2 className="text-4xl font-heading font-bold mb-6">
+            <h2 className="text-4xl font-heading font-bold mb-6 bg-gradient-to-r from-yellow-500 via-red-500 to-yellow-500 bg-clip-text text-transparent animate-pulse">
               {admissionsData?.dates?.subtitle || "Application deadlines"}
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -1098,12 +1127,12 @@ Status: ${record.paymentStatus}`);
                   type: "spring",
                   stiffness: 300
                 }}
-                className="card-3d p-8 flex items-center space-x-6"
+                className="card-3d p-8 flex items-center space-x-6 bg-gradient-to-r from-yellow-500/10 to-red-500/10 border border-yellow-500/20 hover:border-red-400/50 transition-all duration-300"
               >
                 <motion.div
                   whileHover={{ rotateY: 180 }}
                   transition={{ duration: 0.6 }}
-                  className="flex-shrink-0 w-24 h-24 rounded-xl bg-gradient-to-br from-gold to-crimson text-white flex flex-col items-center justify-center shadow-lg"
+                  className="flex-shrink-0 w-24 h-24 rounded-xl admission-step-circle-purple text-white flex flex-col items-center justify-center shadow-lg"
                 >
                   <div className="text-xs font-bold uppercase opacity-90">{deadline.month}</div>
                   <div className="text-2xl font-bold">{deadline.day}</div>
@@ -1111,12 +1140,12 @@ Status: ${record.paymentStatus}`);
                 </motion.div>
 
                 <div className="flex-1">
-                  <h3 className="text-xl font-heading font-semibold mb-2 text-gradient-gold">{deadline.title}</h3>
+                  <h3 className="text-xl font-heading font-semibold mb-2 bg-gradient-to-r from-yellow-600 to-red-600 bg-clip-text text-transparent">{deadline.title}</h3>
                   <p className="text-muted-foreground mb-3">{deadline.description}</p>
                   {(deadline.features || deadline.badges)?.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {(deadline.features || deadline.badges || []).map((badge, idx) => (
-                        <span key={idx} className="px-3 py-1 bg-gold/10 text-gold rounded-full text-sm font-medium">
+                        <span key={idx} className="px-3 py-1 bg-yellow-500/20 text-yellow-600 rounded-full text-sm font-medium border border-yellow-500/40">
                           {badge}
                         </span>
                       ))}
@@ -1139,10 +1168,10 @@ Status: ${record.paymentStatus}`);
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <div className="text-sm font-bold text-gold uppercase tracking-wider mb-4">
+            <div className="text-sm font-bold text-sky-500 uppercase tracking-wider mb-4">
               {admissionsData?.affordability?.title || "Affordability"}
             </div>
-            <h2 className="text-4xl font-heading font-bold mb-6">
+            <h2 className="text-4xl font-heading font-bold mb-6 bg-gradient-to-r from-sky-600 via-blue-600 to-sky-600 bg-clip-text text-transparent animate-pulse">
               {admissionsData?.affordability?.subtitle || "Tuition and financial aid"}
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -1156,13 +1185,13 @@ Status: ${record.paymentStatus}`);
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="card-3d p-6 group"
+              className="card-3d p-6 group bg-gradient-to-r from-sky-500/10 to-blue-500/10 border border-sky-500/20 hover:border-blue-400/50 transition-all duration-300"
             >
               <summary className="flex items-center justify-between cursor-pointer list-none">
-                <span className="text-xl font-heading font-semibold">
+                <span className="text-xl font-heading font-semibold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">
                   {admissionsData?.affordability?.tabs?.[0] || "Tuition & Fees (2025)"}
                 </span>
-                <ChevronRight className="h-5 w-5 text-gold transition-transform group-open:rotate-90" />
+                <ChevronRight className="h-5 w-5 text-sky-500 transition-transform group-open:rotate-90" />
               </summary>
               <div className="mt-4 pt-4 border-t border-border text-muted-foreground">
                 {admissionsData?.affordability?.content?.tuition || "Estimated tuition: $28,500 per year. Fees vary by program and credits. Contact us for a personalized breakdown."}
@@ -1173,13 +1202,13 @@ Status: ${record.paymentStatus}`);
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="card-3d p-6 group"
+              className="card-3d p-6 group bg-gradient-to-r from-sky-500/10 to-blue-500/10 border border-sky-500/20 hover:border-blue-400/50 transition-all duration-300"
             >
               <summary className="flex items-center justify-between cursor-pointer list-none">
-                <span className="text-xl font-heading font-semibold">
+                <span className="text-xl font-heading font-semibold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">
                   {admissionsData?.affordability?.tabs?.[1] || "Scholarships & Grants"}
                 </span>
-                <ChevronRight className="h-5 w-5 text-gold transition-transform group-open:rotate-90" />
+                <ChevronRight className="h-5 w-5 text-sky-500 transition-transform group-open:rotate-90" />
               </summary>
               <div className="mt-4 pt-4 border-t border-border text-muted-foreground">
                 {admissionsData?.affordability?.content?.scholarships || "Automatic merit scholarships are awarded at the time of admission. Need-based grants available via aid application."}
@@ -1190,13 +1219,13 @@ Status: ${record.paymentStatus}`);
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="card-3d p-6 group"
+              className="card-3d p-6 group bg-gradient-to-r from-sky-500/10 to-blue-500/10 border border-sky-500/20 hover:border-blue-400/50 transition-all duration-300"
             >
               <summary className="flex items-center justify-between cursor-pointer list-none">
-                <span className="text-xl font-heading font-semibold">
+                <span className="text-xl font-heading font-semibold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">
                   {admissionsData?.affordability?.tabs?.[2] || "Payment Plans"}
                 </span>
-                <ChevronRight className="h-5 w-5 text-gold transition-transform group-open:rotate-90" />
+                <ChevronRight className="h-5 w-5 text-sky-500 transition-transform group-open:rotate-90" />
               </summary>
               <div className="mt-4 pt-4 border-t border-border text-muted-foreground">
                 {admissionsData?.affordability?.content?.payments || "Monthly, interest-free plans available. Third-party sponsorships supported."}
@@ -1209,13 +1238,13 @@ Status: ${record.paymentStatus}`);
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="card-3d p-8 bg-gradient-to-r from-gold/5 via-transparent to-crimson/5 border-dashed"
+            className="card-3d p-8 bg-gradient-to-r from-sky-500/10 via-blue-500/5 to-sky-500/10 border border-sky-500/20 hover:border-blue-400/50 transition-all duration-300"
           >
             <div className="text-center">
-              <div className="text-sm font-bold text-gold uppercase tracking-wider mb-4">
+              <div className="text-sm font-bold text-sky-500 uppercase tracking-wider mb-4">
                 {admissionsData?.campus?.title || "See the campus"}
               </div>
-              <h3 className="text-3xl font-heading font-bold mb-4">
+              <h3 className="text-3xl font-heading font-bold mb-4 bg-gradient-to-r from-sky-600 via-blue-600 to-sky-600 bg-clip-text text-transparent">
                 {admissionsData?.campus?.subtitle || "Tour, info sessions, and counselor chats"}
               </h3>
               <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
@@ -1275,7 +1304,7 @@ Status: ${record.paymentStatus}`);
                             onClick={() => setCurrentImageIndex(index)}
                             className={`flex-shrink-0 w-16 h-12 rounded overflow-hidden border-2 transition-all ${
                               index === currentImageIndex
-                                ? 'border-gold shadow-lg'
+                                ? 'border-sky-500 shadow-lg shadow-sky-500/50'
                                 : 'border-transparent opacity-70 hover:opacity-100'
                             }`}
                           >
@@ -1293,18 +1322,19 @@ Status: ${record.paymentStatus}`);
               )}
 
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button variant="ghost" size="lg" onClick={() => setShowContactModal(true)}>Contact Admissions</Button>
-                <Button
-                  variant={admissionStatus ? "gold" : "outline"}
-                  size="lg"
+                <button 
+                  onClick={() => setShowContactModal(true)}
+                  className="contact-btn"
+                >
+                  Contact Admissions
+                </button>
+                <button
                   onClick={handleApplyNowClick}
-                  className={admissionStatus
-                    ? 'text-yellow-600 font-bold border-2 border-sky-400 hover:border-sky-500 bg-transparent hover:bg-sky-50'
-                    : 'border-red-500 text-red-500 hover:bg-red-50'
-                  }
+                  className={admissionStatus ? "apply-btn" : "contact-btn opacity-50 cursor-not-allowed"}
+                  disabled={!admissionStatus}
                 >
                   {admissionStatus ? 'Apply Now' : 'Admissions Closed'}
-                </Button>
+                </button>
               </div>
             </div>
           </motion.div>
@@ -1320,8 +1350,8 @@ Status: ${record.paymentStatus}`);
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <div className="text-sm font-bold text-gold uppercase tracking-wider mb-4">FAQs</div>
-            <h2 className="text-4xl font-heading font-bold mb-6">Answers to common questions</h2>
+            <div className="text-sm font-bold text-sky-500 uppercase tracking-wider mb-4">FAQs</div>
+            <h2 className="text-4xl font-heading font-bold mb-6 bg-gradient-to-r from-sky-600 via-blue-600 to-sky-600 bg-clip-text text-transparent animate-pulse">Answers to common questions</h2>
           </motion.div>
 
           <div className="max-w-4xl mx-auto space-y-4">
@@ -1331,20 +1361,20 @@ Status: ${record.paymentStatus}`);
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="card-3d overflow-hidden"
+                className="card-3d overflow-hidden bg-gradient-to-r from-sky-500/10 to-blue-500/10 border border-sky-500/20 hover:border-blue-400/50 transition-all duration-300"
               >
                 <motion.button
                   onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
-                  className="w-full p-6 text-left flex items-center justify-between hover:bg-muted/5 transition-colors"
+                  className="w-full p-6 text-left flex items-center justify-between hover:bg-sky-500/5 transition-colors"
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <span className="text-lg font-heading font-semibold pr-4">{faq.question}</span>
+                  <span className="text-lg font-heading font-semibold pr-4 bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">{faq.question}</span>
                   <motion.div
                     animate={{ rotate: openFAQ === index ? 90 : 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <ChevronRight className="h-5 w-5 text-gold flex-shrink-0" />
+                    <ChevronRight className="h-5 w-5 text-sky-500 flex-shrink-0" />
                   </motion.div>
                 </motion.button>
 

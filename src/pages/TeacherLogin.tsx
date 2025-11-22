@@ -94,10 +94,10 @@ const TeacherLogin = () => {
           <Button
             variant="ghost"
             onClick={() => navigate("/auth")}
-            className="glass-button flex items-center space-x-1 sm:space-x-2 text-white dark:text-white hover:text-gold hover:bg-gold/10 h-8 sm:h-auto px-2 sm:px-3 transition-all"
+            className="back-btn flex items-center space-x-2"
           >
-            <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span className="text-sm">Back</span>
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back</span>
           </Button>
         </div>
 

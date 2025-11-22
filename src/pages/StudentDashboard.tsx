@@ -1102,20 +1102,13 @@ const StudentDashboard = () => {
                   whileHover={{ scale: 1.08 }}
                   whileTap={{ scale: 0.92 }}
                   onClick={action.action}
-                  className="relative rounded-lg overflow-hidden group h-full min-h-[110px] sm:min-h-[120px]"
+                  className="square-glass-btn flex flex-col items-center justify-center gap-2 relative group"
+                  style={{ padding: '16px 20px' }}
                 >
-                  {/* Gradient border container */}
-                  <div className={`relative bg-gradient-to-r ${action.borderColor} p-[1.5px] sm:p-[2px] rounded-lg transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(0,212,255,0.5),0_0_10px_rgba(255,193,7,0.3)] h-full`}>
-                    <div className="relative bg-slate-950/95 backdrop-blur-sm border border-slate-800/50 p-2 sm:p-3 md:p-4 rounded-[6px] transform transition-all duration-300 group-hover:bg-slate-900/95 group-hover:shadow-[inset_0_0_15px_rgba(0,212,255,0.15)] h-full flex flex-col items-center justify-center"
-                      style={{
-                        boxShadow: 'inset 0 0 8px rgba(0, 212, 255, 0.08)',
-                      }}>
-                      <action.icon className={`h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 mb-1.5 sm:mb-2 md:mb-3 drop-shadow-lg group-hover:scale-120 transition-transform ${action.textColor}`} />
-                      <p className={`text-[11px] sm:text-xs md:text-sm font-bold text-center drop-shadow-md line-clamp-2 ${action.textColor}`}>
-                        {action.title}
-                      </p>
-                    </div>
-                  </div>
+                  <action.icon className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white drop-shadow-lg" />
+                  <p className="text-[11px] sm:text-xs md:text-sm font-bold text-center text-white line-clamp-2">
+                    {action.title}
+                  </p>
                   {/* Notification Badge */}
                   {action.badge && action.badge > 0 && (
                     <span className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-gold text-black text-[9px] sm:text-[10px] font-bold rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center animate-pulse shadow-lg shadow-yellow-400/50">
@@ -2268,6 +2261,23 @@ const StudentDashboard = () => {
                       <p className="text-sm text-muted-foreground mb-3">
                         {remark.message}
                       </p>
+
+                      {remark.images && remark.images.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {remark.images.map((img: string, i: number) => (
+                            <img
+                              key={i}
+                              src={img}
+                              alt={`principal-remark-${i}`}
+                              className="w-20 h-20 object-cover rounded-lg border border-border/30 cursor-pointer"
+                              onClick={() => {
+                                setSelectedImage({ src: img, title: `Principal Remark` });
+                                setShowImageModal(true);
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
                       
                       <div className="text-xs text-muted-foreground">
                         <span className="font-medium">From:</span> Principal

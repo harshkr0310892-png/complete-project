@@ -82,8 +82,8 @@ const Courses = () => {
         {/* Back Button - Positioned properly below header */}
         <div className="mb-8">
           <Link to="/">
-            <Button variant="ghost" size="sm" className="h-9 px-4 hover:bg-accent/10">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+            <Button variant="ghost" size="sm" className="back-btn flex items-center space-x-2">
+              <ArrowLeft className="h-4 w-4" />
               <span>Back to Home</span>
             </Button>
           </Link>

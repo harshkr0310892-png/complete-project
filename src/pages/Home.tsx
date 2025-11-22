@@ -171,6 +171,41 @@ const Home = () => {
       <Navigation />
       <Hero />
 
+      {/* Local CTA styles for Events button */}
+      <style>{`
+        .btn-gold-cta {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.6rem;
+          padding: 0.6rem 1.1rem;
+          border-radius: 12px;
+          font-weight: 700;
+          color: #04201a !important;
+          background: linear-gradient(90deg, #ffd24d 0%, #f59e0b 60%);
+          box-shadow: 0 10px 30px rgba(245,158,11,0.18), 0 3px 8px rgba(0,0,0,0.08);
+          position: relative;
+          overflow: hidden;
+          transition: transform 240ms cubic-bezier(.2,.9,.3,1), box-shadow 240ms ease, filter 200ms ease;
+        }
+        .btn-gold-cta:before {
+          content: '';
+          position: absolute;
+          inset: -30% -10% auto -10%;
+          height: 160%;
+          background: linear-gradient(120deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.18) 35%, rgba(255,255,255,0.02) 60%, rgba(255,255,255,0) 80%);
+          transform: translateX(-90%) rotate(-14deg);
+          transition: transform 900ms cubic-bezier(.2,.9,.3,1), opacity 400ms ease;
+          opacity: 0.9;
+          pointer-events: none;
+        }
+        .btn-gold-cta:hover { transform: translateY(-4px); box-shadow: 0 18px 48px rgba(245,158,11,0.22); }
+        .btn-gold-cta:hover:before { transform: translateX(15%) rotate(-14deg); }
+        .btn-gold-cta:active { transform: translateY(-1px) scale(.998); }
+        .btn-gold-cta .arrow-animate { transition: transform 260ms ease; }
+        .btn-gold-cta:hover .arrow-animate { transform: translateX(8px); }
+      `}</style>
+
       {/* Recent Highlights */}
       <section className="py-8 sm:py-12 bg-gradient-to-b from-background via-muted/5 to-accent/5">
         <div className="container-wide px-3 sm:px-6">
@@ -264,10 +299,10 @@ const Home = () => {
               <Button
                 variant="outline"
                 size="sm"
-                className="group bg-gradient-to-r from-gold to-yellow-500 text-black hover:from-gold/90 hover:to-yellow-500/90 border-0 transition-all duration-300 font-semibold w-full sm:w-auto text-xs sm:text-base py-2 sm:py-2.5"
+                className="btn-gold-cta w-full sm:w-auto text-xs sm:text-base py-2 sm:py-2.5"
               >
                 <span>View All Events & News</span>
-                <span className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1">
+                <span className="ml-2 inline-block arrow-animate">
                   →
                 </span>
               </Button>

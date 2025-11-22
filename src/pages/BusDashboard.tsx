@@ -14,7 +14,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import Compass from '@/components/Compass';
 import { lazy, Suspense } from 'react';
 import RouteLoader from '@/components/RouteLoader';
 
@@ -620,7 +619,7 @@ const BusDashboard: React.FC = () => {
       } else {
         setGpsError('Location error. Please enable GPS and try again.');
       }
-    }, { enableHighAccuracy: true, maximumAge: 50, timeout: 30000 });
+    }, { enableHighAccuracy: true, maximumAge: 100, timeout: 30000 });
     setWatchId(id as unknown as number);
   };
 
@@ -1101,10 +1100,6 @@ const BusDashboard: React.FC = () => {
                 )}
               </div>
               
-              {/* Compass Component */}
-              <div className="mt-4">
-                <Compass busLocation={myLatLng} previousLocation={previousLatLng} />
-              </div>
               
               <div className="mt-3 w-full h-48 sm:h-64 rounded-lg overflow-hidden border border-border/50 bg-muted">
                 {tracking && myLatLng ? (

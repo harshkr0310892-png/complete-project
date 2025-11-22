@@ -122,7 +122,7 @@ const ExamRoutinePage = () => {
             <Button
               variant="ghost"
               onClick={() => navigate(-1)}
-              className="glass-button flex items-center space-x-2"
+              className="back-btn flex items-center space-x-2"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Back</span>
