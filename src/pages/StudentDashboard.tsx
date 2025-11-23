@@ -274,41 +274,55 @@ const StudentDashboard = () => {
   // Helper function to get student attendance for a specific date
   const getStudentAttendanceForDate = (dateStr: string) => {
     if (!studentData) return null;
-    
     // First try to get from royal-academy-students
     const allStudents = JSON.parse(localStorage.getItem('royal-academy-students') || '[]');
-    let currentStudent = allStudents.find((s: any) => s.email === studentData.email || s.id === studentData.id);
-    
+    let currentStudent = allStudents.find((s: any) =>
+      (s.id && s.id === studentData.id) ||
+      (s.email && s.email === studentData.email) ||
+      (s.rollNumber && s.rollNumber === studentData.rollNumber) ||
+      (s.fullName && s.fullName === studentData.fullName)
+    );
     // If not found, try auth students
     if (!currentStudent || !currentStudent.attendance) {
       const authStudents = JSON.parse(localStorage.getItem('royal-academy-auth-students') || '[]');
-      currentStudent = authStudents.find((s: any) => s.email === studentData.email || s.studentId === studentData.id);
+      currentStudent = authStudents.find((s: any) =>
+        (s.studentId && s.studentId === studentData.id) ||
+        (s.id && s.id === studentData.id) ||
+        (s.email && s.email === studentData.email) ||
+        (s.rollNumber && s.rollNumber === studentData.rollNumber) ||
+        (s.fullName && s.fullName === studentData.fullName)
+      );
     }
-    
     if (!currentStudent || !currentStudent.attendance) return null;
-    
     return currentStudent.attendance.find((a: any) => a.date === dateStr);
   };
 
   // Helper function to calculate attendance statistics
   const calculateAttendanceStats = () => {
     if (!studentData) return { present: 0, absent: 0, late: 0, holidays: 0, percentage: 0 };
-    
     const today = new Date();
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
-    
     // Get all students to find current student's data
     // Use the students data from state instead of localStorage for real-time updates
     const allStudents = JSON.parse(localStorage.getItem('royal-academy-students') || '[]');
-    let currentStudent = allStudents.find((s: any) => s.email === studentData.email || s.id === studentData.id);
-    
+    let currentStudent = allStudents.find((s: any) =>
+      (s.id && s.id === studentData.id) ||
+      (s.email && s.email === studentData.email) ||
+      (s.rollNumber && s.rollNumber === studentData.rollNumber) ||
+      (s.fullName && s.fullName === studentData.fullName)
+    );
     // If not found, try auth students
     if (!currentStudent || !currentStudent.attendance) {
       const authStudents = JSON.parse(localStorage.getItem('royal-academy-auth-students') || '[]');
-      currentStudent = authStudents.find((s: any) => s.email === studentData.email || s.studentId === studentData.id);
+      currentStudent = authStudents.find((s: any) =>
+        (s.studentId && s.studentId === studentData.id) ||
+        (s.id && s.id === studentData.id) ||
+        (s.email && s.email === studentData.email) ||
+        (s.rollNumber && s.rollNumber === studentData.rollNumber) ||
+        (s.fullName && s.fullName === studentData.fullName)
+      );
     }
-    
     if (!currentStudent || !currentStudent.attendance) {
       return { present: 0, absent: 0, late: 0, holidays: 0, percentage: 0 };
     }
@@ -1535,7 +1549,7 @@ const StudentDashboard = () => {
                                 <img
                                   src={attachment}
                                   alt={`Attachment ${index + 1}`}
-                                  className="w-full h-20 sm:h-24 object-cover rounded-lg border border-border/30 group-hover:opacity-80 transition-opacity"
+                                  className="w-full h-20 sm:h-24 object-cover rounded-lg border border-border cursor-pointer hover:opacity-80 transition-opacity"
                                 />
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 rounded-lg transition-colors flex items-center justify-center">
                                   <div className="opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1590,7 +1604,7 @@ const StudentDashboard = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-card rounded-xl p-4 sm:p-6 w-full max-w-4xl max-h-[85vh] overflow-y-auto border border-border/50"
+            className="bg-card rounded-xl p-4 sm:p-6 w-full max-w-4xl max-h-[85vh] sm:max-h-[80vh] overflow-y-auto border border-border/50"
           >
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2">
               <h3 className="text-base sm:text-xl font-heading font-bold text-foreground">
@@ -1887,7 +1901,7 @@ const StudentDashboard = () => {
 
             {/* Fee Overview Stats */}
             <div className="grid grid-cols-1 gap-3 sm:gap-4 mb-4 sm:mb-6">
-              <div className="bg-muted/20 rounded-lg p-3 sm:p-4 border border-border/30">
+              <div className="bg-muted/20 rounded-lg p-3 sm:p-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
                     <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-400" />
@@ -1901,7 +1915,7 @@ const StudentDashboard = () => {
                 </div>
               </div>
               
-              <div className="bg-muted/20 rounded-lg p-3 sm:p-4 border border-border/30">
+              <div className="bg-muted/20 rounded-lg p-3 sm:p-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
                     <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400" />
@@ -1915,7 +1929,7 @@ const StudentDashboard = () => {
                 </div>
               </div>
               
-              <div className="bg-muted/20 rounded-lg p-3 sm:p-4 border border-border/30">
+              <div className="bg-muted/20 rounded-lg p-3 sm:p-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
                     <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-blue-400" />
@@ -2226,11 +2240,12 @@ const StudentDashboard = () => {
               <div className="space-y-4">
                 {principalRemarks
                   .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-                  .map((remark) => (
+                  .map((remark, idx) => (
                     <motion.div
                       key={remark.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
                       className={`p-4 rounded-lg border-l-4 ${
                         remark.type === 'good' 
                           ? 'bg-green-500/10 border-green-500 border-l-green-500' 
@@ -2269,7 +2284,7 @@ const StudentDashboard = () => {
                               key={i}
                               src={img}
                               alt={`principal-remark-${i}`}
-                              className="w-20 h-20 object-cover rounded-lg border border-border/30 cursor-pointer"
+                              className="w-20 h-20 object-cover rounded-lg border border-border cursor-pointer"
                               onClick={() => {
                                 setSelectedImage({ src: img, title: `Principal Remark` });
                                 setShowImageModal(true);
@@ -2279,7 +2294,7 @@ const StudentDashboard = () => {
                         </div>
                       )}
                       
-                      <div className="text-xs text-muted-foreground">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span className="font-medium">From:</span> Principal
                       </div>
                     </motion.div>
@@ -2288,7 +2303,7 @@ const StudentDashboard = () => {
               </div>
             ) : (
               <div className="text-center py-12">
-                <Star className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                <Star className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h4 className="text-lg font-medium text-foreground mb-2">No Principal Remarks</h4>
                 <p className="text-muted-foreground">
                   You haven't received any remarks from the principal yet.
