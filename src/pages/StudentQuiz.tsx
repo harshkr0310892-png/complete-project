@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Brain, Play, Check, Forward, Lightbulb, RotateCcw, Trophy, Clock, X, CheckCircle2 } from "lucide-react";
 
 // Gemini API Configuration
-// Using Gemini 2.5 Pro model for quiz generation
-const API_KEY = "AIzaSyBmCBMa2oYj3Gz5vD4VVbmzbQjkstrp0g4";
-const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent";
+// Using Gemini 2.0 Flash-Lite model for quiz generation
+const API_KEY = "AIzaSyA6CypLEfSwYWaXALh7SaD-jZjhqxbPUJw";
+const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent";
 
 interface Question {
   question: string;
