@@ -73,7 +73,6 @@ const Navigation = () => {
     });
   }, []);
 
-
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -116,7 +115,7 @@ const Navigation = () => {
     if (performanceMode) {
       document.documentElement.classList.add('performance-mode');
     }
-    
+
     // Add performance optimizations for mobile
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
@@ -124,7 +123,6 @@ const Navigation = () => {
       document.documentElement.style.setProperty('--animation-duration', '0s');
     }
   }, [performanceMode]);
-
 
   // Load notifications from localStorage (connected to principal announcements)
   useEffect(() => {
@@ -231,23 +229,60 @@ const Navigation = () => {
       <style>{`
         /* Header Sign Up CTA: deep-blue -> light-blue sheen */
         .signup-cta {
-          position: relative; overflow: hidden; border-radius: 9999px; padding: 0.45rem 1rem;
+          position: relative;
+          overflow: hidden;
+          border-radius: 9999px;
+          padding: 0.45rem 1rem;
           background-image: linear-gradient(90deg,#02204a 0%, #1157d1 55%, #69a8ff 100%);
-          color: #fff !important; box-shadow: 0 8px 28px rgba(2,12,50,0.42); border: none !important;
-          display:inline-flex; align-items:center; gap: .5rem; transition: transform .18s ease, box-shadow .18s ease;
+          color: #fff !important;
+          box-shadow: 0 8px 28px rgba(2,12,50,0.42);
+          border: none !important;
+          display:inline-flex;
+          align-items:center;
+          gap: .5rem;
+          transition: transform .18s ease, box-shadow .18s ease;
         }
-        .signup-cta::before{ content:""; position:absolute; top:-40%; left:-35%; width:60%; height:180%; background:linear-gradient(90deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06), rgba(255,255,255,0)); transform:rotate(-25deg); transition: all .7s cubic-bezier(.2,.9,.3,1); pointer-events:none; opacity:.95 }
-        .group:hover .signup-cta{ transform: translateY(-3px) scale(1.03); box-shadow: 0 16px 36px rgba(2,12,50,0.55) }
-        .signup-cta:hover, .signup-cta:focus, .signup-cta:active {
+        .signup-cta::before{
+          content:"";
+          position:absolute;
+          top:-40%;
+          left:-35%;
+          width:60%;
+          height:180%;
+          background:linear-gradient(90deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06), rgba(255,255,255,0));
+          transform:rotate(-25deg);
+          transition: all .7s cubic-bezier(.2,.9,.3,1);
+          pointer-events:none;
+          opacity:.95
+        }
+        .group:hover .signup-cta{
+          transform: translateY(-3px) scale(1.03);
+          box-shadow: 0 16px 36px rgba(2,12,50,0.55)
+        }
+        .signup-cta:hover,
+        .signup-cta:focus,
+        .signup-cta:active {
           background-image: linear-gradient(90deg,#02204a 0%, #1157d1 55%, #69a8ff 100%) !important;
           background-color: #02204a !important;
           color: #ffffff !important;
           border: none !important;
         }
-        .group:hover .signup-cta::before{ left: 120% }
-        .signup-cta .arrow-anim{ transition: transform .28s cubic-bezier(.2,.9,.3,1) }
-        .group:hover .signup-cta .arrow-anim{ transform: translateX(6px) }
-        @media (prefers-reduced-motion: reduce){ .signup-cta, .signup-cta::before, .signup-cta .arrow-anim{ transition:none!important } }
+        .group:hover .signup-cta::before{
+          left: 120%
+        }
+        .signup-cta .arrow-anim{
+          transition: transform .28s cubic-bezier(.2,.9,.3,1)
+        }
+        .group:hover .signup-cta .arrow-anim{
+          transform: translateX(6px)
+        }
+        @media (prefers-reduced-motion: reduce){
+          .signup-cta,
+          .signup-cta::before,
+          .signup-cta .arrow-anim{
+            transition:none!important
+          }
+        }
       `}</style>
 
       <div className="w-full">
@@ -355,17 +390,17 @@ const Navigation = () => {
                     ))}
                   </div>
                   {/* Authentication Links */}
-                <div className="border-t border-border pt-4 mt-4">
-                  <div className="text-xs font-semibold text-gold mb-3 px-4">SIGN IN</div>
-                  <Link to="/teacher" className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-medium text-foreground hover:text-gold hover:bg-gold/5" onClick={closeMenu}>
-                    <Users className="h-5 w-5" />
-                    <div>{t("teacherLogin")}</div>
-                  </Link>
-                  <Link to="/student-login" className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-medium text-foreground hover:text-gold hover:bg-gold/5" onClick={closeMenu}>
-                    <GraduationCap className="h-5 w-5" />
-                    <div>{t("studentLogin")}</div>
-                  </Link>
-                </div>
+                  <div className="border-t border-border pt-4 mt-4">
+                    <div className="text-xs font-semibold text-gold mb-3 px-4">SIGN IN</div>
+                    <Link to="/teacher" className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-medium text-foreground hover:text-gold hover:bg-gold/5" onClick={closeMenu}>
+                      <Users className="h-5 w-5" />
+                      <div>{t("teacherLogin")}</div>
+                    </Link>
+                    <Link to="/student-login" className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-medium text-foreground hover:text-gold hover:bg-gold/5" onClick={closeMenu}>
+                      <GraduationCap className="h-5 w-5" />
+                      <div>{t("studentLogin")}</div>
+                    </Link>
+                  </div>
                   {/* Dropdown Footer */}
                   <div className="border-t border-border bg-muted/20 p-4">
                     <div className="text-center">
@@ -420,7 +455,6 @@ const Navigation = () => {
               );
             })()}
 
-            {/* Notification Bell */}
             {/* Language Selector */}
             <div className="relative" data-language-container>
               <Button
@@ -484,6 +518,7 @@ const Navigation = () => {
               </AnimatePresence>
             </div>
 
+            {/* Notification Bell */}
             <div className="relative" data-notification-container>
               <Button
                 variant="ghost"
@@ -566,7 +601,7 @@ const Navigation = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
-                <Button
+              <Button
                 variant="ghost"
                 size="sm"
                 onClick={toggleMenu}
